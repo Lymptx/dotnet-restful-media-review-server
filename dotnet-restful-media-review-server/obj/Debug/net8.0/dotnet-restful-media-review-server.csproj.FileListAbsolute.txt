@@ -12,3 +12,4 @@ C:\Source\dotnet-restful-media-review-server\dotnet-restful-media-review-server\
 C:\Source\dotnet-restful-media-review-server\dotnet-restful-media-review-server\obj\Debug\net8.0\dotnet-restful-media-review-server.pdb
 C:\Source\dotnet-restful-media-review-server\dotnet-restful-media-review-server\obj\Debug\net8.0\dotnet-restful-media-review-server.genruntimeconfig.cache
 C:\Source\dotnet-restful-media-review-server\dotnet-restful-media-review-server\obj\Debug\net8.0\ref\dotnet-restful-media-review-server.dll
+C:\Source\dotnet-restful-media-review-server\dotnet-restful-media-review-server\obj\Debug\net8.0\dotnet-restful-media-review-server.sourcelink.json
