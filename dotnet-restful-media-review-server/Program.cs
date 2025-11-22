@@ -1,10 +1,16 @@
 ﻿using dotnet_restful_media_review_server.Handlers;
 using dotnet_restful_media_review_server.Server;
 
-static void Main(string[] args)
+namespace dotnet_restful_media_review_server
 {
-    Console.WriteLine("Program started");
-    HttpRestServer svr = new();
-    svr.RequestReceived += Handler.HandleEvent;
-    svr.Run();
+    internal static class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Program started");
+            HttpRestServer svr = new();
+            svr.RequestReceived += Handler.HandleEvent;
+            svr.Run();
+        }
+    }
 }
