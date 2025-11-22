@@ -13,6 +13,14 @@ public sealed class VersionHandler : Handler, IHandler
             if ((e.Path == "/version") && (e.Method == HttpMethod.Get))
             {
                 //send valid response here
+                JsonObject payload = new()
+                {
+                    ["success"] = true,
+                    ["version"] = "1.0.0"
+                };
+
+                e.Respond(HttpStatusCode.OK, payload);
+                return;
             }
             else
             {
