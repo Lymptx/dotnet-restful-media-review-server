@@ -11,19 +11,19 @@ public abstract class Handler: IHandler
 
     private static List<IHandler> _GetHandlers()
     {
-        List<IHandler> rval = new();
+        List<IHandler> handlersList = new();
 
         foreach(Type i in Assembly.GetExecutingAssembly().GetTypes()
             .Where(m => m.IsAssignableTo(typeof(IHandler)) && !m.IsAbstract))
         {
             IHandler? h = (IHandler?) Activator.CreateInstance(i);
-            if(h is not null) { rval.Add(h); }
+            if(h is not null) { handlersList.Add(h); }
         }
 
-        return rval;
+        return handlersList;
     }
 
-
+    //Event dispatcher
     public static void HandleEvent(object? sender, HttpRestEventArgs e)
     {
         foreach(IHandler i in (_Handlers ??= _GetHandlers()))

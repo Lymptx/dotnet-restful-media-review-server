@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dotnet-restful-media-review-server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c7dfaff8b0ea649d65406a001c8e3a1ffec4dff1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ca721a0ac073c7758e20c5dd822304a0f24f63b")]
 [assembly: System.Reflection.AssemblyProductAttribute("dotnet-restful-media-review-server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dotnet-restful-media-review-server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

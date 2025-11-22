@@ -53,6 +53,10 @@ namespace dotnet_restful_media_review_server.Server
             get; set;
         } = false;
 
+        public void Respond(HttpStatusCode statusCode, JsonObject? content)
+        {
+            Respond((int)statusCode, content);
+        }
 
         public void Respond(int statusCode, JsonObject? content)
         {
