@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Source\\dotnet-restful-media-review-server\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5576AB4C-467D-4B71-BA8E-B35540BCD876}|dotnet-restful-media-review-server\\dotnet-restful-media-review-server.csproj|c:\\source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\acl.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{5576AB4C-467D-4B71-BA8E-B35540BCD876}|dotnet-restful-media-review-server\\dotnet-restful-media-review-server.csproj|solutionrelative:dotnet-restful-media-review-server\\acl.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5576AB4C-467D-4B71-BA8E-B35540BCD876}|dotnet-restful-media-review-server\\dotnet-restful-media-review-server.csproj|c:\\source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\server\\httpresteventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5576AB4C-467D-4B71-BA8E-B35540BCD876}|dotnet-restful-media-review-server\\dotnet-restful-media-review-server.csproj|solutionrelative:dotnet-restful-media-review-server\\server\\httpresteventargs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -22,11 +26,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "acl.ps1",
+              "DocumentMoniker": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\acl.ps1",
+              "RelativeDocumentMoniker": "dotnet-restful-media-review-server\\acl.ps1",
+              "ToolTip": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\acl.ps1",
+              "RelativeToolTip": "dotnet-restful-media-review-server\\acl.ps1",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-22T14:29:08.793Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "HttpRestServer.cs",
               "DocumentMoniker": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\Server\\HttpRestServer.cs",
               "RelativeDocumentMoniker": "dotnet-restful-media-review-server\\Server\\HttpRestServer.cs",
@@ -39,20 +56,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "HttpRestEventArgs.cs",
               "DocumentMoniker": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\Server\\HttpRestEventArgs.cs",
               "RelativeDocumentMoniker": "dotnet-restful-media-review-server\\Server\\HttpRestEventArgs.cs",
               "ToolTip": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\Server\\HttpRestEventArgs.cs",
               "RelativeToolTip": "dotnet-restful-media-review-server\\Server\\HttpRestEventArgs.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAIwEkAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-21T18:22:13.854Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Source\\dotnet-restful-media-review-server\\dotnet-restful-media-review-server\\Program.cs",
               "RelativeDocumentMoniker": "dotnet-restful-media-review-server\\Program.cs",
