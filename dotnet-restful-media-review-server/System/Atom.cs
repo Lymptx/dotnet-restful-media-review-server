@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace dotnet_restful_media_review_server.System
+﻿namespace dotnet_restful_media_review_server.System
 {
     //base implementation for data objects
     public abstract class Atom : IAtom
