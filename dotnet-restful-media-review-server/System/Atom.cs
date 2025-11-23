@@ -11,7 +11,7 @@ namespace dotnet_restful_media_review_server.System
     {
         protected Session? _EditingSession = null;
 
-
+        //make sure user  is logged in
         protected void _VerifySession(Session? session = null)
         {
             if (session is not null) { _EditingSession = session; }
@@ -23,13 +23,14 @@ namespace dotnet_restful_media_review_server.System
             _EditingSession = null;
         }
 
+        //only admin allowed
         protected void _EnsureAdmin()
         {
             _VerifySession();
             if (!_EditingSession!.IsAdmin) { throw new UnauthorizedAccessException("Admin privileges required."); }
         }
 
-
+        //admin and owner allowed
         protected void _EnsureAdminOrOwner(string owner)
         {
             _VerifySession();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using dotnet_restful_media_review_server.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -47,6 +48,22 @@ namespace dotnet_restful_media_review_server.Server
         public string Body { get; }
 
         public JsonObject Content { get; }
+
+        public Session? Session
+        {
+            get
+            {
+                string token = Context.Request.Headers["Authorization"] ?? string.Empty;
+                if (token.ToLower().StartsWith("bearer "))
+                {
+                    token = token[7..].Trim();
+                }
+                else { return null; }
+
+                return Session.Get(token);
+            }
+        }
+
 
         public bool Responded
         {
