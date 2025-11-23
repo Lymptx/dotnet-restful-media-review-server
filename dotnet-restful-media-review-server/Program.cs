@@ -29,6 +29,9 @@ namespace dotnet_restful_media_review_server
                 Console.WriteLine($"Database connection test failed: {ex.Message}");
             }
 
+            // configure db
+            Database.Database.Configure("Host=localhost;Port=5432;Database=mrp;Username=mrp_user;Password=mrp_pwd;Pooling=true;");
+
             // Start the server
             HttpRestServer svr = new();
             svr.RequestReceived += Handler.HandleEvent;
