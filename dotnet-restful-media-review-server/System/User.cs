@@ -5,12 +5,13 @@ namespace dotnet_restful_media_review_server.System
 {
     public sealed class User : Atom, IAtom
     {
+        public int Id { get; set; } = 0;
         private string? _UserName = null;
+        public string PasswordHash { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         private bool _New;
-
-        private string? _PasswordHash = null;
-
 
         public User(Session? session = null)
         {
@@ -38,31 +39,26 @@ namespace dotnet_restful_media_review_server.System
             }
         }
 
-        internal static string _HashPassword(string userName, string password)
+        public bool VerifyPassword(string password)
         {
-            StringBuilder rval = new();
-            foreach (byte i in SHA256.HashData(Encoding.UTF8.GetBytes(userName + password)))
-            {
-                rval.Append(i.ToString("x2"));
-            }
-            return rval.ToString();
+            string h = HashPassword(UserName, password);
+            return string.Equals(h, PasswordHash, StringComparison.OrdinalIgnoreCase);
         }
 
-        public string FullName
+        internal static string HashPassword(string username, string password)
         {
-            get; set;
-        } = string.Empty;
-
-
-        public string EMail
-        {
-            get; set;
-        } = string.Empty;
-
+            // username used as salt
+            using var sha = SHA256.Create();
+            byte[] input = Encoding.UTF8.GetBytes(username + password);
+            byte[] hash = sha.ComputeHash(input);
+            StringBuilder sb = new();
+            foreach (byte b in hash) sb.Append(b.ToString("x2"));
+            return sb.ToString();
+        }
 
         public void SetPassword(string password)
         {
-            _PasswordHash = _HashPassword(UserName, password);
+            _PasswordHash = HashPassword(UserName, password);
         }
 
         public override void Save()
