@@ -4,26 +4,52 @@ using dotnet_restful_media_review_server.Handlers;
 using dotnet_restful_media_review_server.Server;
 using dotnet_restful_media_review_server.System;
 using Npgsql;
+using System.IO;
+using System.Text.Json;
 
 namespace dotnet_restful_media_review_server
 {
     internal static class Program
     {
+        class AppSettings
+        {
+            public ConnectionStrings ConnectionStrings { get; set; } = new();
+        }
+
+        class ConnectionStrings
+        {
+            public string DefaultConnection { get; set; } = string.Empty;
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Program started");
 
+            // Read connection string from appsettings.json manually
+            string jsonPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            if (!File.Exists(jsonPath))
+            {
+                Console.WriteLine("ERROR: appsettings.json not found!");
+                return;
+            }
+
+            string jsonText = File.ReadAllText(jsonPath);
+            var settings = JsonSerializer.Deserialize<AppSettings>(jsonText);
+            if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionStrings.DefaultConnection))
+            {
+                Console.WriteLine("ERROR: Connection string not found in appsettings.json!");
+                return;
+            }
+
+            string connString = settings.ConnectionStrings.DefaultConnection;
+
             // Test PostgreSQL connection
             try
             {
-                // Hardcoded connection string
-                string connString = "Host=localhost;Port=5433;Database=mrp;Username=mrp_user;Password=mrp_pwd";
-
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
-                // Simple test query
-                var userCount = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM users;");
+                int userCount = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM users;");
                 Console.WriteLine($"Users in database: {userCount}");
             }
             catch (Exception ex)
@@ -31,28 +57,46 @@ namespace dotnet_restful_media_review_server
                 Console.WriteLine($"Database connection test failed: {ex.Message}");
             }
 
-            // configure db
-            Database.Database.Configure("Host=localhost;Port=5433;Database=mrp;Username=mrp_user;Password=mrp_pwd;Pooling=true;");
+            // Configure Database class
+            Database.Database.Configure(connString);
 
-            //temporary test code for testing user functionality
-            var user = new User { UserName = "batman", FullName = "Bruce Wayne", Email = "batman@gotham.com" };
-            user.SetPassword("batcave");
-            bool created = UserRepository.CreateUser(user);
-            Console.WriteLine($"User created: {created}");
+            // User DB operations
+            try
+            {
+                var newUser = new User
+                {
+                    UserName = "testuserr",
+                    FullName = "Test User",
+                    Email = "test@example.com"
+                };
+                newUser.SetPassword("secret123");
 
-            var fetched = UserRepository.GetByUsername("batman");
-            Console.WriteLine($"Fetched user: {fetched?.UserName}, email: {fetched?.Email}");
+                bool created = UserRepository.CreateUser(newUser);
+                Console.WriteLine($"User created: {created}");
 
-            bool validLogin = UserRepository.ValidateCredentials("batman", "batcave", out var loggedUser);
-            Console.WriteLine($"Login valid: {validLogin}, Name: {loggedUser?.FullName}");
+                var loaded = UserRepository.GetByUsername("testuserr");
+                if (loaded == null)
+                    Console.WriteLine("FAILED: Could not load user");
+                else
+                    Console.WriteLine($"Loaded user: {loaded.UserName}, {loaded.Email}");
 
-            // Start the server
-            HttpRestServer svr = new();
+                bool correctLogin = UserRepository.ValidateCredentials("testuserr", "secret123", out var loggedIn);
+                Console.WriteLine($"Correct password login: {correctLogin}");
+
+                bool wrongLogin = UserRepository.ValidateCredentials("testuserr", "wrongpw", out _);
+                Console.WriteLine($"Wrong password login: {wrongLogin}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"TEST ERROR: {ex.Message}");
+            }
+
+            Console.WriteLine("User DB test finished.");
+
+            //  Start HTTP server
+            var svr = new HttpRestServer();
             svr.RequestReceived += Handler.HandleEvent;
             svr.Run();
-
-
-
         }
     }
 }
