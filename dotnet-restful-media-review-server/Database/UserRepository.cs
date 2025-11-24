@@ -10,31 +10,47 @@ namespace dotnet_restful_media_review_server.Database
                 INSERT INTO users (username, password_hash, fullname, email)
                 VALUES (@UserName, @PasswordHash, @FullName, @Email)
             ";
-            try
+
+            return Database.Execute(sql, new
             {
-                int rows = Database.Execute(sql, new
-                {
-                    UserName = user.UserName,
-                    PasswordHash = user.PasswordHash,
-                    FullName = user.FullName,
-                    Email = user.Email
-                });
-                return rows == 1;
-            }
-            catch (Npgsql.PostgresException ex) when (ex.SqlState == "23505") // unique_violation
-            {
-                return false;
-            }
+                user.UserName,
+                user.PasswordHash,
+                user.FullName,
+                user.Email
+            }) == 1;
         }
+
 
         public static User? GetByUsername(string username)
         {
             const string sql = @"
-                SELECT id, username as UserName, password_hash as PasswordHash, fullname as FullName, email as Email, created_at as CreatedAt
-                FROM users WHERE username = @username
-            ";
-            return Database.QuerySingleOrDefault<User>(sql, new { username });
+        SELECT id, username AS UserName, password_hash AS PasswordHash, 
+               fullname AS FullName, email AS Email, created_at AS CreatedAt
+        FROM users
+        WHERE username = @username
+    ";
+
+            // Load from DB into a pure DTO
+            UserRecord? rec = Database.QuerySingleOrDefault<UserRecord>(sql, new { username });
+
+            if (rec == null)
+                return null;
+
+            // Convert DTO → domain model
+            var user = new User();
+            user.Id = rec.Id;
+            user.UserName = rec.UserName;
+            user.PasswordHash = rec.PasswordHash;
+            user.FullName = rec.FullName;
+            user.Email = rec.Email;
+
+            // Prevent username from being changed later
+            user.MarkAsExisting();
+
+            return user;
         }
+
+
 
         public static bool ValidateCredentials(string username, string password, out User? user)
         {

@@ -60,6 +60,11 @@ namespace dotnet_restful_media_review_server.System
             return sb.ToString();
         }
 
+        public void MarkAsExisting()
+        {
+            _New = false;
+        }
+
         public void SetPassword(string password)
         {
             PasswordHash = HashPassword(UserName, password);
