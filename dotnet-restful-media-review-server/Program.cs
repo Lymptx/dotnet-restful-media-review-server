@@ -26,6 +26,7 @@ namespace dotnet_restful_media_review_server
             Console.WriteLine("Program started");
 
             // Read connection string from appsettings.json manually
+            // (there is for sure a better way to do this later)
             string jsonPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
             if (!File.Exists(jsonPath))
             {
