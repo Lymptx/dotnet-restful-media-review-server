@@ -26,7 +26,7 @@ namespace dotnet_restful_media_review_server
             Console.WriteLine("Program started");
 
             // Read connection string from appsettings.json manually
-            // (there is for sure a better way to do this later)
+            // (TODO: there is for sure a better way to do this later)
             string jsonPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
             if (!File.Exists(jsonPath))
             {
@@ -44,7 +44,7 @@ namespace dotnet_restful_media_review_server
 
             string connString = settings.ConnectionStrings.DefaultConnection;
 
-            // Test PostgreSQL connection
+            // Test PostgreSQL connection (with docker)
             try
             {
                 using var conn = new NpgsqlConnection(connString);
@@ -55,44 +55,44 @@ namespace dotnet_restful_media_review_server
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Database connection test failed: {ex.Message}");
+                Console.WriteLine($"Database connection test failed - is the Docker container running?: {ex.Message}");
             }
 
             // Configure Database class
             Database.Database.Configure(connString);
 
-            // User DB operations
-            try
-            {
-                var newUser = new User
-                {
-                    UserName = "testuserr",
-                    FullName = "Test User",
-                    Email = "test@example.com"
-                };
-                newUser.SetPassword("secret123");
+            // User DB operations - not important yet for intermediate handin
+            //try
+            //{
+            //    var newUser = new User
+            //    {
+            //        UserName = "testuserr",
+            //        FullName = "Test User",
+            //        Email = "test@example.com"
+            //    };
+            //    newUser.SetPassword("secret123");
 
-                bool created = UserRepository.CreateUser(newUser);
-                Console.WriteLine($"User created: {created}");
+            //    bool created = UserRepository.CreateUser(newUser);
+            //    Console.WriteLine($"User created: {created}");
 
-                var loaded = UserRepository.GetByUsername("testuserr");
-                if (loaded == null)
-                    Console.WriteLine("FAILED: Could not load user");
-                else
-                    Console.WriteLine($"Loaded user: {loaded.UserName}, {loaded.Email}");
+            //    var loaded = UserRepository.GetByUsername("testuserr");
+            //    if (loaded == null)
+            //        Console.WriteLine("FAILED: Could not load user");
+            //    else
+            //        Console.WriteLine($"Loaded user: {loaded.UserName}, {loaded.Email}");
 
-                bool correctLogin = UserRepository.ValidateCredentials("testuserr", "secret123", out var loggedIn);
-                Console.WriteLine($"Correct password login: {correctLogin}");
+            //    bool correctLogin = UserRepository.ValidateCredentials("testuserr", "secret123", out var loggedIn);
+            //    Console.WriteLine($"Correct password login: {correctLogin}");
 
-                bool wrongLogin = UserRepository.ValidateCredentials("testuserr", "wrongpw", out _);
-                Console.WriteLine($"Wrong password login: {wrongLogin}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"TEST ERROR: {ex.Message}");
-            }
+            //    bool wrongLogin = UserRepository.ValidateCredentials("testuserr", "wrongpw", out _);
+            //    Console.WriteLine($"Wrong password login: {wrongLogin}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"TEST ERROR: {ex.Message}");
+            //}
 
-            Console.WriteLine("User DB test finished.");
+            //Console.WriteLine("User DB test finished.");
 
             //  Start HTTP server
             var svr = new HttpRestServer();
