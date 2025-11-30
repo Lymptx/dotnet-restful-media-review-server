@@ -18,7 +18,7 @@ namespace dotnet_restful_media_review_server.Handlers
                         User user = new()
                         {
                             UserName = e.Content?["username"]?.GetValue<string>() ?? string.Empty,
-                            FullName = e.Content?["fullname"]?.GetValue<string>() ?? string.Empty,
+                            FullName = e.Content?["name"]?.GetValue<string>() ?? string.Empty,
                             Email = e.Content?["email"]?.GetValue<string>() ?? string.Empty
                         };
                         user.SetPassword(e.Content?["password"]?.GetValue<string>() ?? string.Empty);

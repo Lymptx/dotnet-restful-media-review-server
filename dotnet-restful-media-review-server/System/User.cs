@@ -20,7 +20,9 @@ namespace dotnet_restful_media_review_server.System
         }
 
         // Parameterless constructor required for Dapper for now, later a construcur where the parameters exactly match the column names and types
-        public User() { }
+        public User() {
+            _New = true;
+        }
 
 
 
@@ -75,7 +77,7 @@ namespace dotnet_restful_media_review_server.System
             if (!_New) { _EnsureAdminOrOwner(UserName); }
 
             // TODO: save user to database
-            PasswordHash = null;
+
             _EndEdit();
         }
 
