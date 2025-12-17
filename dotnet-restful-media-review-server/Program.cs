@@ -57,7 +57,27 @@ namespace dotnet_restful_media_review_server
             }
 
             // Configure Database class
-            Database.Database.Configure(connString);
+            DB.Configure(connString);
+
+            var testUser = new User
+            {
+                UserName = "testuser",
+                FullName = "Test User",
+                Email = "test@example.com"
+            };
+            testUser.SetPassword("secret123");
+
+            bool created = UserRepository.CreateUser(testUser);
+            Console.WriteLine($"User created: {created}");
+
+            var loaded = UserRepository.GetByUsername("testuser");
+            Console.WriteLine($"Loaded user: {loaded?.UserName}, {loaded?.Email}");
+
+            bool validLogin = UserRepository.ValidateCredentials("testuser", "secret123", out var loggedIn);
+            Console.WriteLine($"Valid login: {validLogin}");
+
+
+
 
             // User DB operations - not important yet for intermediate handin
             //try
