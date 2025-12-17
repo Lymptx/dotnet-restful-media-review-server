@@ -49,9 +49,7 @@ namespace dotnet_restful_media_review_server
             {
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
-
-                int userCount = conn.ExecuteScalar<int>("SELECT COUNT(*) FROM users;");
-                Console.WriteLine($"Users in database: {userCount}");
+                Console.WriteLine("DB connected");
             }
             catch (Exception ex)
             {
