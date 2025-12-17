@@ -4,7 +4,7 @@ using Dapper;
 
 namespace dotnet_restful_media_review_server.Database
 {
-    public static class Database
+    public static class DB
     {
         private static string? _connectionString;
 
@@ -16,7 +16,7 @@ namespace dotnet_restful_media_review_server.Database
         private static IDbConnection GetConnection()
         {
             if (string.IsNullOrEmpty(_connectionString))
-                throw new InvalidOperationException("Database not configured. Call Database.Configure(...) at startup.");
+                throw new InvalidOperationException("Database not configured. Call DB.Configure(...) at startup.");
             return new NpgsqlConnection(_connectionString);
         }
 

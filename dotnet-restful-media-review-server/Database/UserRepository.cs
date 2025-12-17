@@ -11,7 +11,7 @@ namespace dotnet_restful_media_review_server.Database
                 VALUES (@UserName, @PasswordHash, @FullName, @Email)
             ";
 
-            return Database.Execute(sql, new
+            return DB.Execute(sql, new
             {
                 user.UserName,
                 user.PasswordHash,
@@ -20,37 +20,31 @@ namespace dotnet_restful_media_review_server.Database
             }) == 1;
         }
 
-
         public static User? GetByUsername(string username)
         {
             const string sql = @"
-        SELECT id, username AS UserName, password_hash AS PasswordHash, 
-               fullname AS FullName, email AS Email, created_at AS CreatedAt
-        FROM users
-        WHERE username = @username
-    ";
+                SELECT id, username AS UserName, password_hash AS PasswordHash, 
+                       fullname AS FullName, email AS Email, created_at AS CreatedAt
+                FROM users
+                WHERE username = @username
+            ";
 
-            // Load from DB into a pure DTO
-            UserRecord? rec = Database.QuerySingleOrDefault<UserRecord>(sql, new { username });
+            UserRecord? rec = DB.QuerySingleOrDefault<UserRecord>(sql, new { username });
 
-            if (rec == null)
-                return null;
+            if (rec == null) return null;
 
-            // Convert DTO → domain model
-            var user = new User();
-            user.Id = rec.Id;
-            user.UserName = rec.UserName;
-            user.PasswordHash = rec.PasswordHash;
-            user.FullName = rec.FullName;
-            user.Email = rec.Email;
+            var user = new User
+            {
+                Id = rec.Id,
+                UserName = rec.UserName,
+                PasswordHash = rec.PasswordHash,
+                FullName = rec.FullName,
+                Email = rec.Email
+            };
 
-            // Prevent username from being changed later
             user.MarkAsExisting();
-
             return user;
         }
-
-
 
         public static bool ValidateCredentials(string username, string password, out User? user)
         {
