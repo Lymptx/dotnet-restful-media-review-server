@@ -23,15 +23,20 @@ namespace dotnet_restful_media_review_server.Database
         public static User? GetByUsername(string username)
         {
             const string sql = @"
-                SELECT id, username AS UserName, password_hash AS PasswordHash, 
-                       fullname AS FullName, email AS Email, created_at AS CreatedAt
+                SELECT id,
+                       username AS UserName,
+                       password_hash AS PasswordHash,
+                       fullname AS FullName,
+                       email AS Email
                 FROM users
                 WHERE username = @username
             ";
 
-            UserRecord? rec = DB.QuerySingleOrDefault<UserRecord>(sql, new { username });
+            UserRecord? rec =
+                DB.QuerySingleOrDefault<UserRecord>(sql, new { username });
 
-            if (rec == null) return null;
+            if (rec == null)
+                return null;
 
             var user = new User
             {
@@ -46,7 +51,10 @@ namespace dotnet_restful_media_review_server.Database
             return user;
         }
 
-        public static bool ValidateCredentials(string username, string password, out User? user)
+        public static bool ValidateCredentials(
+            string username,
+            string password,
+            out User? user)
         {
             user = GetByUsername(username);
             if (user == null) return false;
