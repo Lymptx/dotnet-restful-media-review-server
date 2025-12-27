@@ -13,8 +13,29 @@ namespace dotnet_restful_media_review_server.Handlers
             if (!e.Path.StartsWith("/users"))
                 return;
 
-            // GET /users
             if (e.Path == "/users" && e.Method == HttpMethod.Get)
+            {
+                HandleGetAllUsers(e);
+                return;
+            }
+
+            if (e.Path == "/users" && e.Method == HttpMethod.Post)
+            {
+                HandleCreateUser(e);
+                return;
+            }
+
+            e.Respond(HttpStatusCode.BadRequest, new JsonObject
+            {
+                ["success"] = false,
+                ["reason"] = "Invalid user endpoint"
+            });
+            e.Responded = true;
+        }
+
+        private void HandleGetAllUsers(HttpRestEventArgs e)
+        {
+            try
             {
                 var users = UserRepository.GetAllUsers();
                 var arr = new JsonArray();
@@ -31,52 +52,124 @@ namespace dotnet_restful_media_review_server.Handlers
                 }
 
                 e.Respond(HttpStatusCode.OK, arr);
-                e.Responded = true;
-                return;
+            }
+            catch (Exception ex)
+            {
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "Failed to retrieve users"
+                });
+                Console.WriteLine($"Error in GetAllUsers: {ex.Message}");
             }
 
-            // POST /users
-            if (e.Path == "/users" && e.Method == HttpMethod.Post)
+            e.Responded = true;
+        }
+
+        private void HandleCreateUser(HttpRestEventArgs e)
+        {
+            try
             {
-                try
+                string username = e.Content?["username"]?.GetValue<string>() ?? string.Empty;
+                string name = e.Content?["name"]?.GetValue<string>() ?? string.Empty;
+                string email = e.Content?["email"]?.GetValue<string>() ?? string.Empty;
+                string password = e.Content?["password"]?.GetValue<string>() ?? string.Empty;
+
+                // Validate input
+                if (string.IsNullOrWhiteSpace(username))
                 {
-                    User user = new()
+                    e.Respond(HttpStatusCode.BadRequest, new JsonObject
                     {
-                        UserName = e.Content?["username"]?.GetValue<string>() ?? string.Empty,
-                        FullName = e.Content?["name"]?.GetValue<string>() ?? string.Empty,
-                        Email = e.Content?["email"]?.GetValue<string>() ?? string.Empty
-                    };
+                        ["success"] = false,
+                        ["reason"] = "Username is required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
 
-                    user.SetPassword(
-                        e.Content?["password"]?.GetValue<string>() ?? string.Empty
-                    );
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    e.Respond(HttpStatusCode.BadRequest, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Password is required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
 
-                    UserRepository.CreateUser(user);
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    e.Respond(HttpStatusCode.BadRequest, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Email is required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
 
-                    e.Respond(HttpStatusCode.OK, new JsonObject
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    e.Respond(HttpStatusCode.BadRequest, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Full name is required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+
+                // Check if username already exists
+                var existing = UserRepository.GetByUsername(username);
+                if (existing != null)
+                {
+                    e.Respond(HttpStatusCode.Conflict, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Username already exists"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+
+                // Create user
+                User user = new()
+                {
+                    UserName = username,
+                    FullName = name,
+                    Email = email
+                };
+                user.SetPassword(password);
+
+                bool created = UserRepository.CreateUser(user);
+
+                if (created)
+                {
+                    e.Respond(HttpStatusCode.Created, new JsonObject
                     {
                         ["success"] = true,
-                        ["message"] = "User created."
+                        ["message"] = "User created successfully"
                     });
                 }
-                catch (Exception ex)
+                else
                 {
                     e.Respond(HttpStatusCode.InternalServerError, new JsonObject
                     {
                         ["success"] = false,
-                        ["reason"] = ex.Message
+                        ["reason"] = "Failed to create user"
                     });
                 }
-
-                e.Responded = true;
-                return;
             }
-
-            e.Respond(HttpStatusCode.BadRequest, new JsonObject
+            catch (Exception ex)
             {
-                ["success"] = false,
-                ["reason"] = "Invalid user endpoint."
-            });
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "An error occurred while creating the user"
+                });
+                Console.WriteLine($"Error in CreateUser: {ex.Message}");
+            }
 
             e.Responded = true;
         }
