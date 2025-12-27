@@ -71,6 +71,7 @@ namespace dotnet_restful_media_review_server.Server
             Respond((int)statusCode, content);
         }
 
+        //TODO remove this duplicate code
         public void Respond(int statusCode, JsonObject? content)
         {
             HttpListenerResponse response = Context.Response;
@@ -90,5 +91,33 @@ namespace dotnet_restful_media_review_server.Server
 
             Responded = true;
         }
+
+        //this is the newer version with JsonNode instead of JsonObject
+        public void Respond(HttpStatusCode statusCode, JsonNode? content)
+        {
+            Respond((int)statusCode, content);
+        }
+
+        public void Respond(int statusCode, JsonNode? content)
+        {
+            HttpListenerResponse response = Context.Response;
+            response.StatusCode = statusCode;
+
+            string body = content?.ToJsonString() ?? string.Empty;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Responding: {statusCode}: {body}\n");
+
+            byte[] buffer = Encoding.UTF8.GetBytes(body);
+            response.ContentLength64 = buffer.Length;
+            response.ContentType = "application/json; charset=UTF-8";
+
+            using Stream output = response.OutputStream;
+            output.Write(buffer, 0, buffer.Length);
+            output.Close();
+
+            Responded = true;
+        }
+
     }
 }

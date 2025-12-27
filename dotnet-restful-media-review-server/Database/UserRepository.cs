@@ -1,4 +1,5 @@
 ﻿using dotnet_restful_media_review_server.System;
+using System.Collections.Generic;
 
 namespace dotnet_restful_media_review_server.Database
 {
@@ -49,6 +50,20 @@ namespace dotnet_restful_media_review_server.Database
 
             user.MarkAsExisting();
             return user;
+        }
+
+        public static IEnumerable<UserRecord> GetAllUsers()
+        {
+            const string sql = @"
+                SELECT id,
+                       username AS UserName,
+                       fullname AS FullName,
+                       email AS Email
+                FROM users
+                ORDER BY id
+            ";
+
+            return DB.Query<UserRecord>(sql);
         }
 
         public static bool ValidateCredentials(
