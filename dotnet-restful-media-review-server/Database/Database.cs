@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using Npgsql;
-using Dapper;
-using System.Collections.Generic;
 
 namespace dotnet_restful_media_review_server.Database
 {
@@ -14,38 +12,43 @@ namespace dotnet_restful_media_review_server.Database
             _connectionString = connectionString;
         }
 
-        private static IDbConnection GetConnection()
+        public static NpgsqlConnection GetConnection()
         {
             if (string.IsNullOrEmpty(_connectionString))
                 throw new InvalidOperationException(
                     "Database not configured. Call DB.Configure(...) at startup."
                 );
-
             return new NpgsqlConnection(_connectionString);
         }
 
-        public static IEnumerable<T> Query<T>(string sql, object? param = null)
+        public static int ExecuteNonQuery(string sql, params NpgsqlParameter[] parameters)
         {
             using var conn = GetConnection();
-            return conn.Query<T>(sql, param);
+            conn.Open();
+            using var cmd = new NpgsqlCommand(sql, conn);
+            if (parameters != null)
+                cmd.Parameters.AddRange(parameters);
+            return cmd.ExecuteNonQuery();
         }
 
-        public static T? QuerySingleOrDefault<T>(string sql, object? param = null)
+        public static object? ExecuteScalar(string sql, params NpgsqlParameter[] parameters)
         {
             using var conn = GetConnection();
-            return conn.QuerySingleOrDefault<T>(sql, param);
+            conn.Open();
+            using var cmd = new NpgsqlCommand(sql, conn);
+            if (parameters != null)
+                cmd.Parameters.AddRange(parameters);
+            return cmd.ExecuteScalar();
         }
 
-        public static T QuerySingle<T>(string sql, object? param = null)
+        public static NpgsqlDataReader ExecuteReader(string sql, params NpgsqlParameter[] parameters)
         {
-            using var conn = GetConnection();
-            return conn.QuerySingle<T>(sql, param);
-        }
-
-        public static int Execute(string sql, object? param = null)
-        {
-            using var conn = GetConnection();
-            return conn.Execute(sql, param);
+            var conn = GetConnection();
+            conn.Open();
+            var cmd = new NpgsqlCommand(sql, conn);
+            if (parameters != null)
+                cmd.Parameters.AddRange(parameters);
+            return cmd.ExecuteReader(CommandBehavior.CloseConnection);
         }
     }
 }
