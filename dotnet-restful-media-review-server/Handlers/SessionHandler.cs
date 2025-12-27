@@ -14,49 +14,13 @@ namespace dotnet_restful_media_review_server.Handlers
 
             if (e.Path == "/sessions" && e.Method == HttpMethod.Post)
             {
-                try
-                {
-                    string username = e.Content["username"]?.GetValue<string>() ?? string.Empty;
-                    string password = e.Content["password"]?.GetValue<string>() ?? string.Empty;
+                HandleLogin(e);
+                return;
+            }
 
-                    Session? session = Session.Create(username, password);
-
-                    if (session == null)
-                    {
-                        e.Respond(
-                            HttpStatusCode.Unauthorized,
-                            new JsonObject
-                            {
-                                ["success"] = false,
-                                ["reason"] = "Invalid username or password"
-                            }
-                        );
-                    }
-                    else
-                    {
-                        e.Respond(
-                            HttpStatusCode.OK,
-                            new JsonObject
-                            {
-                                ["success"] = true,
-                                ["token"] = session.Token
-                            }
-                        );
-                    }
-                }
-                catch (Exception ex)
-                {
-                    e.Respond(
-                        HttpStatusCode.InternalServerError,
-                        new JsonObject
-                        {
-                            ["success"] = false,
-                            ["reason"] = ex.Message
-                        }
-                    );
-                }
-
-                e.Responded = true;
+            if (e.Path == "/sessions" && e.Method == HttpMethod.Delete)
+            {
+                HandleLogout(e);
                 return;
             }
 
@@ -68,6 +32,98 @@ namespace dotnet_restful_media_review_server.Handlers
                     ["reason"] = "Invalid session endpoint"
                 }
             );
+            e.Responded = true;
+        }
+
+        private void HandleLogin(HttpRestEventArgs e)
+        {
+            try
+            {
+                string username = e.Content["username"]?.GetValue<string>() ?? string.Empty;
+                string password = e.Content["password"]?.GetValue<string>() ?? string.Empty;
+
+                Session? session = Session.Create(username, password);
+
+                if (session == null)
+                {
+                    e.Respond(
+                        HttpStatusCode.Unauthorized,
+                        new JsonObject
+                        {
+                            ["success"] = false,
+                            ["reason"] = "Invalid username or password"
+                        }
+                    );
+                }
+                else
+                {
+                    e.Respond(
+                        HttpStatusCode.OK,
+                        new JsonObject
+                        {
+                            ["success"] = true,
+                            ["token"] = session.Token
+                        }
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Respond(
+                    HttpStatusCode.InternalServerError,
+                    new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = ex.Message
+                    }
+                );
+            }
+
+            e.Responded = true;
+        }
+
+        private void HandleLogout(HttpRestEventArgs e)
+        {
+            try
+            {
+                Session? session = e.Session;
+
+                if (session == null)
+                {
+                    e.Respond(
+                        HttpStatusCode.Unauthorized,
+                        new JsonObject
+                        {
+                            ["success"] = false,
+                            ["reason"] = "Not logged in or invalid token"
+                        }
+                    );
+                    e.Responded = true;
+                    return;
+                }
+
+                session.Close();
+
+                e.Respond(
+                    HttpStatusCode.OK,
+                    new JsonObject
+                    {
+                        ["success"] = true,
+                        ["message"] = "Logged out successfully"
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                e.Respond(
+                    HttpStatusCode.InternalServerError,
+                    new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = ex.Message
+                    }
+                );
+            }
 
             e.Responded = true;
         }
