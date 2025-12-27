@@ -1,68 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
+using System.Text.Json.Nodes;
 
 namespace dotnet_restful_media_review_server.Server
 {
     public sealed class HttpRestServer : IDisposable
     {
-        private readonly HttpListener _Listener;
-
+        private readonly HttpListener _listener;
+        private bool _disposed;
 
         public HttpRestServer(int port = 12000)
         {
-            _Listener = new();
-            _Listener.Prefixes.Add($"http://+:{port}/");
+            _listener = new HttpListener();
+            _listener.Prefixes.Add($"http://+:{port}/");
         }
 
+        public event EventHandler<HttpRestEventArgs>? RequestReceived;
 
-        public event EventHandler<HttpRestEventArgs> RequestReceived;
-
-
-        public bool Running
-        {
-            get; private set;
-        }
-
-
-        public void Stop()
-        {
-            _Listener.Close();
-            Running = false;
-        }
-
+        public bool Running { get; private set; }
 
         public void Run()
         {
-            if (Running) return;
+            if (Running)
+                return;
 
-            _Listener.Start();
+            _listener.Start();
             Running = true;
 
+            // Main request loop
             while (Running)
             {
-                HttpListenerContext context = _Listener.GetContext();
-
-                _ = Task.Run(() =>
+                try
                 {
-                    HttpRestEventArgs args = new(context);
-                    RequestReceived?.Invoke(this, args);
+                    HttpListenerContext context = _listener.GetContext();
 
-                    if (!args.Responded)
-                    {
-                        args.Respond((int)HttpStatusCode.NotFound, new() { ["success"] = false, ["reason"] = "Not found." });
-                    }
-                });
+                    // Handle each request in a separate thread
+                    _ = Task.Run(() => HandleRequest(context));
+                }
+                catch (HttpListenerException)
+                {
+                    // Expected when stopping listener
+                    if (Running)
+                        throw;
+                }
             }
         }
 
+        private void HandleRequest(HttpListenerContext context)
+        {
+            try
+            {
+                HttpRestEventArgs args = new(context);
+                RequestReceived?.Invoke(this, args);
+
+                // Send 404 if no handler responded
+                if (!args.Responded)
+                {
+                    args.Respond(
+                        HttpStatusCode.NotFound,
+                        new JsonObject
+                        {
+                            ["success"] = false,
+                            ["reason"] = "Endpoint not found"
+                        }
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error handling request: {ex.Message}");
+                Console.ResetColor();
+            }
+        }
+
+        public void Stop()
+        {
+            if (!Running)
+                return;
+
+            Running = false;
+            _listener.Stop();
+        }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            if (_disposed)
+                return;
+
+            Stop();
+            _listener.Close();
+            _disposed = true;
         }
     }
 }
