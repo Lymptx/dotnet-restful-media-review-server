@@ -1,35 +1,16 @@
-﻿using dotnet_restful_media_review_server.System;
-
-namespace dotnet_restful_media_review_server.System
+﻿namespace dotnet_restful_media_review_server.System
 {
-    public sealed class MediaEntry : Atom
+    public sealed class MediaEntry
     {
-        public string Id { get; private set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string MediaType { get; set; } = string.Empty;  // movie, game, series
+        public string MediaType { get; set; } = string.Empty; // movie, tv_show, game, book
+        public string Genre { get; set; } = string.Empty;
         public int ReleaseYear { get; set; }
-        public string[] Genres { get; set; } = Array.Empty<string>();
-
-        // The user who created the media
-        public string Owner { get; set; } = string.Empty;
-
-
-        public override void Save()
-        {
-            // Intermediate submission:
-            // No DB logic yet
-            _EndEdit();
-        }
-
-        public override void Delete()
-        {
-            _EndEdit();
-        }
-
-        public override void Refresh()
-        {
-            //todo or final handin
-        }
+        public int AgeRestriction { get; set; } // 0, 6, 12, 16, 18
+        public string Description { get; set; } = string.Empty;
+        public int CreatorUserId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
     }
 }
