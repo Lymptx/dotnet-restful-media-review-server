@@ -24,14 +24,11 @@ namespace dotnet_restful_media_review_server.Handlers
                 return;
             }
 
-            e.Respond(
-                HttpStatusCode.BadRequest,
-                new JsonObject
-                {
-                    ["success"] = false,
-                    ["reason"] = "Invalid session endpoint"
-                }
-            );
+            e.Respond(HttpStatusCode.BadRequest, new JsonObject
+            {
+                ["success"] = false,
+                ["reason"] = "Invalid session endpoint"
+            });
             e.Responded = true;
         }
 
@@ -42,41 +39,46 @@ namespace dotnet_restful_media_review_server.Handlers
                 string username = e.Content["username"]?.GetValue<string>() ?? string.Empty;
                 string password = e.Content["password"]?.GetValue<string>() ?? string.Empty;
 
+                // Validate input
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                {
+                    e.Respond(HttpStatusCode.BadRequest, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Username and password are required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+
+                // Attempt to create session
                 Session? session = Session.Create(username, password);
 
                 if (session == null)
                 {
-                    e.Respond(
-                        HttpStatusCode.Unauthorized,
-                        new JsonObject
-                        {
-                            ["success"] = false,
-                            ["reason"] = "Invalid username or password"
-                        }
-                    );
+                    e.Respond(HttpStatusCode.Unauthorized, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Invalid username or password"
+                    });
                 }
                 else
                 {
-                    e.Respond(
-                        HttpStatusCode.OK,
-                        new JsonObject
-                        {
-                            ["success"] = true,
-                            ["token"] = session.Token
-                        }
-                    );
+                    e.Respond(HttpStatusCode.OK, new JsonObject
+                    {
+                        ["success"] = true,
+                        ["token"] = session.Token
+                    });
                 }
             }
             catch (Exception ex)
             {
-                e.Respond(
-                    HttpStatusCode.InternalServerError,
-                    new JsonObject
-                    {
-                        ["success"] = false,
-                        ["reason"] = ex.Message
-                    }
-                );
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "An error occurred during login"
+                });
+                Console.WriteLine($"Error in Login: {ex.Message}");
             }
 
             e.Responded = true;
@@ -90,39 +92,31 @@ namespace dotnet_restful_media_review_server.Handlers
 
                 if (session == null)
                 {
-                    e.Respond(
-                        HttpStatusCode.Unauthorized,
-                        new JsonObject
-                        {
-                            ["success"] = false,
-                            ["reason"] = "Not logged in or invalid token"
-                        }
-                    );
+                    e.Respond(HttpStatusCode.Unauthorized, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Not logged in or invalid token"
+                    });
                     e.Responded = true;
                     return;
                 }
 
                 session.Close();
 
-                e.Respond(
-                    HttpStatusCode.OK,
-                    new JsonObject
-                    {
-                        ["success"] = true,
-                        ["message"] = "Logged out successfully"
-                    }
-                );
+                e.Respond(HttpStatusCode.OK, new JsonObject
+                {
+                    ["success"] = true,
+                    ["message"] = "Logged out successfully"
+                });
             }
             catch (Exception ex)
             {
-                e.Respond(
-                    HttpStatusCode.InternalServerError,
-                    new JsonObject
-                    {
-                        ["success"] = false,
-                        ["reason"] = ex.Message
-                    }
-                );
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "An error occurred during logout"
+                });
+                Console.WriteLine($"Error in Logout: {ex.Message}");
             }
 
             e.Responded = true;
