@@ -3,97 +3,52 @@ using System.Text;
 
 namespace dotnet_restful_media_review_server.System
 {
-    public sealed class User : Atom, IAtom
+    public sealed class User
     {
-        public int Id { get; set; } = 0;
-        private string? _UserName = null;
-        public string PasswordHash { get; set; } = string.Empty;
+        public int Id { get; set; }
+        public string UserName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
+        public string PasswordSalt { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        private bool _New;
-
-        public User(Session? session = null)
+        public void SetPassword(string password)
         {
-            _EditingSession = session;
-            _New = true;
-        }
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be empty");
 
-        // Parameterless constructor required for Dapper for now, later a construcur where the parameters exactly match the column names and types
-        public User() {
-            _New = true;
-        }
-
-
-
-        public static User Get(string userName, Session? session = null)
-        {
-            // TODO: load user and return if admin or owner.
-            throw new NotImplementedException();
-        }
-
-
-        public string UserName
-        {
-            get { return _UserName ?? string.Empty; }
-            set
-            {
-                if (!_New) { throw new InvalidOperationException("User name cannot be changed."); }
-                if (string.IsNullOrWhiteSpace(value)) { throw new ArgumentException("User name must not be empty."); }
-
-                _UserName = value;
-            }
+            PasswordSalt = GenerateSalt();
+            PasswordHash = HashPassword(password, PasswordSalt);
         }
 
         public bool VerifyPassword(string password)
         {
-            string h = HashPassword(UserName, password);
-            return string.Equals(h, PasswordHash, StringComparison.OrdinalIgnoreCase);
+            if (string.IsNullOrWhiteSpace(password))
+                return false;
+
+            string hash = HashPassword(password, PasswordSalt);
+            return hash == PasswordHash;
         }
 
-        internal static string HashPassword(string username, string password)
+        private static string GenerateSalt()
         {
-            // username used as salt
-            using var sha = SHA256.Create();
-            byte[] input = Encoding.UTF8.GetBytes(username + password);
-            byte[] hash = sha.ComputeHash(input);
-            StringBuilder sb = new();
-            foreach (byte b in hash) sb.Append(b.ToString("x2"));
-            return sb.ToString();
+            byte[] saltBytes = RandomNumberGenerator.GetBytes(32);
+            return Convert.ToBase64String(saltBytes);
         }
 
-        public void MarkAsExisting()
+        private static string HashPassword(string password, string salt)
         {
-            _New = false;
-        }
+            using var sha256 = SHA256.Create();
+            byte[] saltBytes = Convert.FromBase64String(salt);
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            byte[] combined = new byte[saltBytes.Length + passwordBytes.Length];
 
-        public void SetPassword(string password)
-        {
-            PasswordHash = HashPassword(UserName, password);
-        }
+            Buffer.BlockCopy(saltBytes, 0, combined, 0, saltBytes.Length);
+            Buffer.BlockCopy(passwordBytes, 0, combined, saltBytes.Length, passwordBytes.Length);
 
-        public override void Save()
-        {
-            if (!_New) { _EnsureAdminOrOwner(UserName); }
-
-            // TODO: save user to database
-
-            _EndEdit();
-        }
-
-        public override void Delete()
-        {
-            _EnsureAdminOrOwner(UserName);
-
-            // TODO: delete user from database
-
-            _EndEdit();
-        }
-
-        public override void Refresh()
-        {
-            // TODO: refresh user from database
-            _EndEdit();
+            byte[] hash = sha256.ComputeHash(combined);
+            return Convert.ToBase64String(hash);
         }
     }
 }

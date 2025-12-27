@@ -1,5 +1,5 @@
 ﻿using dotnet_restful_media_review_server.System;
-using System.Collections.Generic;
+using Npgsql;
 
 namespace dotnet_restful_media_review_server.Database
 {
@@ -7,73 +7,136 @@ namespace dotnet_restful_media_review_server.Database
     {
         public static bool CreateUser(User user)
         {
-            const string sql = @"
-                INSERT INTO users (username, password_hash, fullname, email)
-                VALUES (@UserName, @PasswordHash, @FullName, @Email)
-            ";
+            string sql = @"
+                INSERT INTO users (username, full_name, email, password_hash, password_salt, created_at)
+                VALUES (@username, @fullName, @email, @passwordHash, @passwordSalt, @createdAt)";
 
-            return DB.Execute(sql, new
-            {
-                user.UserName,
-                user.PasswordHash,
-                user.FullName,
-                user.Email
-            }) == 1;
+            int rows = DB.ExecuteNonQuery(sql,
+                new NpgsqlParameter("@username", user.UserName),
+                new NpgsqlParameter("@fullName", user.FullName),
+                new NpgsqlParameter("@email", user.Email),
+                new NpgsqlParameter("@passwordHash", user.PasswordHash),
+                new NpgsqlParameter("@passwordSalt", user.PasswordSalt),
+                new NpgsqlParameter("@createdAt", user.CreatedAt)
+            );
+
+            return rows > 0;
         }
 
         public static User? GetByUsername(string username)
         {
-            const string sql = @"
-                SELECT id,
-                       username AS UserName,
-                       password_hash AS PasswordHash,
-                       fullname AS FullName,
-                       email AS Email
+            string sql = @"
+                SELECT id, username, full_name, email, password_hash, password_salt, created_at
                 FROM users
-                WHERE username = @username
-            ";
+                WHERE username = @username";
 
-            UserRecord? rec =
-                DB.QuerySingleOrDefault<UserRecord>(sql, new { username });
+            using var reader = DB.ExecuteReader(sql,
+                new NpgsqlParameter("@username", username));
 
-            if (rec == null)
-                return null;
-
-            var user = new User
+            if (reader.Read())
             {
-                Id = rec.Id,
-                UserName = rec.UserName,
-                PasswordHash = rec.PasswordHash,
-                FullName = rec.FullName,
-                Email = rec.Email
-            };
+                return new User
+                {
+                    Id = reader.GetInt32(0),
+                    UserName = reader.GetString(1),
+                    FullName = reader.GetString(2),
+                    Email = reader.GetString(3),
+                    PasswordHash = reader.GetString(4),
+                    PasswordSalt = reader.GetString(5),
+                    CreatedAt = reader.GetDateTime(6)
+                };
+            }
 
-            user.MarkAsExisting();
-            return user;
+            return null;
         }
 
-        public static IEnumerable<UserRecord> GetAllUsers()
+        public static User? GetById(int id)
         {
-            const string sql = @"
-                SELECT id,
-                       username AS UserName,
-                       fullname AS FullName,
-                       email AS Email
+            string sql = @"
+                SELECT id, username, full_name, email, password_hash, password_salt, created_at
                 FROM users
-                ORDER BY id
-            ";
+                WHERE id = @id";
 
-            return DB.Query<UserRecord>(sql);
+            using var reader = DB.ExecuteReader(sql,
+                new NpgsqlParameter("@id", id));
+
+            if (reader.Read())
+            {
+                return new User
+                {
+                    Id = reader.GetInt32(0),
+                    UserName = reader.GetString(1),
+                    FullName = reader.GetString(2),
+                    Email = reader.GetString(3),
+                    PasswordHash = reader.GetString(4),
+                    PasswordSalt = reader.GetString(5),
+                    CreatedAt = reader.GetDateTime(6)
+                };
+            }
+
+            return null;
         }
 
-        public static bool ValidateCredentials(
-            string username,
-            string password,
-            out User? user)
+        public static List<User> GetAllUsers()
+        {
+            string sql = @"
+                SELECT id, username, full_name, email, password_hash, password_salt, created_at
+                FROM users
+                ORDER BY username";
+
+            var users = new List<User>();
+
+            using var reader = DB.ExecuteReader(sql);
+            while (reader.Read())
+            {
+                users.Add(new User
+                {
+                    Id = reader.GetInt32(0),
+                    UserName = reader.GetString(1),
+                    FullName = reader.GetString(2),
+                    Email = reader.GetString(3),
+                    PasswordHash = reader.GetString(4),
+                    PasswordSalt = reader.GetString(5),
+                    CreatedAt = reader.GetDateTime(6)
+                });
+            }
+
+            return users;
+        }
+
+        public static bool ValidateCredentials(string username, string password, out User? user)
         {
             user = GetByUsername(username);
-            if (user == null) return false;
+            if (user == null)
+                return false;
+
             return user.VerifyPassword(password);
+        }
+
+        public static bool UpdateUser(User user)
+        {
+            string sql = @"
+                UPDATE users
+                SET full_name = @fullName, email = @email
+                WHERE id = @id";
+
+            int rows = DB.ExecuteNonQuery(sql,
+                new NpgsqlParameter("@fullName", user.FullName),
+                new NpgsqlParameter("@email", user.Email),
+                new NpgsqlParameter("@id", user.Id)
+            );
+
+            return rows > 0;
+        }
+
+        public static bool DeleteUser(int id)
+        {
+            string sql = "DELETE FROM users WHERE id = @id";
+
+            int rows = DB.ExecuteNonQuery(sql,
+                new NpgsqlParameter("@id", id));
+
+            return rows > 0;
         }
     }
 }
