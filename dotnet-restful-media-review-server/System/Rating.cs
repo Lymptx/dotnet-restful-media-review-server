@@ -1,29 +1,15 @@
-﻿using dotnet_restful_media_review_server.System;
-
-namespace dotnet_restful_media_review_server.System
+﻿namespace dotnet_restful_media_review_server.System
 {
-    public sealed class Rating : Atom
+    public sealed class Rating
     {
-        public string Id { get; private set; } = Guid.NewGuid().ToString();
-        public string MediaId { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
-
-        public int Stars { get; set; }
+        public int Id { get; set; }
+        public int MediaId { get; set; }
+        public int UserId { get; set; }
+        public int Stars { get; set; } // 1-5
         public string Comment { get; set; } = string.Empty;
-
-        public override void Save()
-        {
-            _EndEdit();
-        }
-
-        public override void Delete()
-        {
-            _EndEdit();
-        }
-
-        public override void Refresh()
-        {
-            // Later used for DB load
-        }
+        public bool IsConfirmed { get; set; } // Comments require confirmation before public visibility
+        public int LikeCount { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
     }
 }
