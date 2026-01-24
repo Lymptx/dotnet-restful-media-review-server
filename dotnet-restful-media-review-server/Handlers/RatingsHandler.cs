@@ -273,9 +273,9 @@ namespace dotnet_restful_media_review_server.Handlers
                 e.Respond(HttpStatusCode.InternalServerError, new JsonObject
                 {
                     ["success"] = false,
-                    ["reason"] = "An error occurred while processing the rating"
+                    ["reason"] = $"An error occurred while processing the rating: {ex.Message}"
                 });
-                Console.WriteLine($"Error in CreateOrUpdateRating: {ex.Message}");
+                Console.WriteLine($"Error in CreateOrUpdateRating: {ex}");
             }
 
             e.Responded = true;
