@@ -51,7 +51,6 @@ namespace dotnet_restful_media_review_server.Handlers
                     INNER JOIN ratings r ON m.id = r.media_id
                     WHERE r.is_confirmed = true
                     GROUP BY m.id, m.title, m.media_type, m.genre, m.release_year
-                    HAVING COUNT(r.id) >= 3
                     ORDER BY avg_rating DESC, rating_count DESC
                     LIMIT @limit";
 
