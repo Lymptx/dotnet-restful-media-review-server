@@ -71,7 +71,9 @@ namespace dotnet_restful_media_review_server.Handlers
             try
             {
                 string username = e.Content?["username"]?.GetValue<string>() ?? string.Empty;
-                string name = e.Content?["name"]?.GetValue<string>() ?? string.Empty;
+                string name = e.Content?["name"]?.GetValue<string>()
+                    ?? e.Content?["fullname"]?.GetValue<string>()
+                    ?? string.Empty;
                 string email = e.Content?["email"]?.GetValue<string>() ?? string.Empty;
                 string password = e.Content?["password"]?.GetValue<string>() ?? string.Empty;
 
