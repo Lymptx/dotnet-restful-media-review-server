@@ -90,6 +90,90 @@ namespace dotnet_restful_media_review_server.Database
             return mediaList;
         }
 
+        public static List<MediaEntry> Search(string? title, string? mediaType, string? genre,
+            int? minYear, int? maxYear, int? maxAgeRestriction, double? minRating)
+        {
+            var sql = @"
+                SELECT DISTINCT m.id, m.title, m.media_type, m.genre, m.release_year, 
+                       m.age_restriction, m.description, m.creator_user_id, 
+                       m.created_at, m.updated_at
+                FROM media_entries m";
+
+            bool needsRatingJoin = minRating.HasValue && minRating.Value > 0;
+            if (needsRatingJoin)
+            {
+                sql += @"
+                LEFT JOIN (
+                    SELECT media_id, AVG(stars)::float as avg_rating
+                    FROM ratings
+                    WHERE is_confirmed = true
+                    GROUP BY media_id
+                ) r ON m.id = r.media_id";
+            }
+
+            var conditions = new List<string>();
+            var parameters = new List<NpgsqlParameter>();
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                conditions.Add("LOWER(m.title) LIKE LOWER(@title)");
+                parameters.Add(new NpgsqlParameter("@title", $"%{title}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(mediaType))
+            {
+                conditions.Add("LOWER(m.media_type) = LOWER(@mediaType)");
+                parameters.Add(new NpgsqlParameter("@mediaType", mediaType));
+            }
+
+            if (!string.IsNullOrWhiteSpace(genre))
+            {
+                conditions.Add("LOWER(m.genre) LIKE LOWER(@genre)");
+                parameters.Add(new NpgsqlParameter("@genre", $"%{genre}%"));
+            }
+
+            if (minYear.HasValue)
+            {
+                conditions.Add("m.release_year >= @minYear");
+                parameters.Add(new NpgsqlParameter("@minYear", minYear.Value));
+            }
+
+            if (maxYear.HasValue)
+            {
+                conditions.Add("m.release_year <= @maxYear");
+                parameters.Add(new NpgsqlParameter("@maxYear", maxYear.Value));
+            }
+
+            if (maxAgeRestriction.HasValue)
+            {
+                conditions.Add("m.age_restriction <= @maxAgeRestriction");
+                parameters.Add(new NpgsqlParameter("@maxAgeRestriction", maxAgeRestriction.Value));
+            }
+
+            if (needsRatingJoin)
+            {
+                conditions.Add("(r.avg_rating >= @minRating OR r.avg_rating IS NULL)");
+                parameters.Add(new NpgsqlParameter("@minRating", minRating.Value));
+            }
+
+            if (conditions.Count > 0)
+            {
+                sql += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            sql += " ORDER BY m.created_at DESC";
+
+            var mediaList = new List<MediaEntry>();
+
+            using var reader = DB.ExecuteReader(sql, parameters.ToArray());
+            while (reader.Read())
+            {
+                mediaList.Add(MapReaderToMedia(reader));
+            }
+
+            return mediaList;
+        }
+
         public static bool UpdateMedia(MediaEntry media)
         {
             string sql = @"

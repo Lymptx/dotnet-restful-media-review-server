@@ -21,6 +21,13 @@ namespace dotnet_restful_media_review_server.Handlers
                 return;
             }
 
+            // GET /media/search - Search and filter media
+            if (e.Path == "/media/search" && e.Method == HttpMethod.Get)
+            {
+                HandleSearchMedia(e);
+                return;
+            }
+
             // POST /media - Create new media (requires auth)
             if (e.Path == "/media" && e.Method == HttpMethod.Post)
             {
@@ -85,6 +92,59 @@ namespace dotnet_restful_media_review_server.Handlers
                     ["reason"] = "Failed to retrieve media entries"
                 });
                 Console.WriteLine($"Error in GetAllMedia: {ex.Message}");
+            }
+
+            e.Responded = true;
+        }
+
+        private void HandleSearchMedia(HttpRestEventArgs e)
+        {
+            try
+            {
+                var query = e.Context.Request.QueryString;
+
+                string? title = query["title"];
+                string? mediaType = query["mediaType"];
+                string? genre = query["genre"];
+
+                int? minYear = null;
+                if (int.TryParse(query["minYear"], out int minYearVal))
+                    minYear = minYearVal;
+
+                int? maxYear = null;
+                if (int.TryParse(query["maxYear"], out int maxYearVal))
+                    maxYear = maxYearVal;
+
+                int? maxAgeRestriction = null;
+                if (int.TryParse(query["maxAgeRestriction"], out int maxAgeVal))
+                    maxAgeRestriction = maxAgeVal;
+
+                double? minRating = null;
+                if (double.TryParse(query["minRating"], out double minRatingVal))
+                    minRating = minRatingVal;
+
+                var mediaList = MediaRepository.Search(title, mediaType, genre,
+                    minYear, maxYear, maxAgeRestriction, minRating);
+
+                var arr = new JsonArray();
+
+                foreach (var media in mediaList)
+                {
+                    var mediaJson = MediaToJson(media);
+                    mediaJson["averageRating"] = RatingRepository.GetAverageRating(media.Id);
+                    arr.Add(mediaJson);
+                }
+
+                e.Respond(HttpStatusCode.OK, arr);
+            }
+            catch (Exception ex)
+            {
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "Failed to search media entries"
+                });
+                Console.WriteLine($"Error in SearchMedia: {ex.Message}");
             }
 
             e.Responded = true;
