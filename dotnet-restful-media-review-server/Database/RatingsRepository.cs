@@ -108,6 +108,23 @@ namespace dotnet_restful_media_review_server.Database
             return ratings;
         }
 
+        public static List<Rating> GetPendingRatings()
+        {
+            string sql = @"
+                SELECT id, media_id, user_id, stars, comment, is_confirmed, like_count, created_at, updated_at
+                FROM ratings
+                WHERE is_confirmed = false
+                ORDER BY created_at DESC";
+
+            var ratings = new List<Rating>();
+            using var reader = DB.ExecuteReader(sql);
+            while (reader.Read())
+            {
+                ratings.Add(MapReaderToRating(reader));
+            }
+            return ratings;
+        }
+
         public static bool UpdateRating(Rating rating)
         {
             string sql = @"

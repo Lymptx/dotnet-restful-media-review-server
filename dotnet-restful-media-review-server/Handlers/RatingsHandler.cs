@@ -64,6 +64,13 @@ namespace dotnet_restful_media_review_server.Handlers
                 return;
             }
 
+            // GET /ratings/pending - List all ratings needing confirmation (admin only)
+            if (e.Path == "/ratings/pending" && e.Method == HttpMethod.Get)
+            {
+                HandleGetPendingRatings(e);
+                return;
+            }
+
             e.Respond(HttpStatusCode.BadRequest, new JsonObject
             {
                 ["success"] = false,
@@ -577,6 +584,42 @@ namespace dotnet_restful_media_review_server.Handlers
                 ["createdAt"] = rating.CreatedAt.ToString("o"),
                 ["updatedAt"] = rating.UpdatedAt?.ToString("o")
             };
+        }
+
+        private void HandleGetPendingRatings(HttpRestEventArgs e)
+        {
+            try
+            {
+                // Require admin authentication
+                if (e.Session == null || !e.Session.IsAdmin)
+                {
+                    e.Respond(HttpStatusCode.Forbidden, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Admin access required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+
+                var pendingRatings = RatingRepository.GetPendingRatings();
+                var arr = new JsonArray();
+                foreach (var rating in pendingRatings)
+                {
+                    arr.Add(RatingToJson(rating));
+                }
+                e.Respond(HttpStatusCode.OK, arr);
+            }
+            catch (Exception ex)
+            {
+                e.Respond(HttpStatusCode.InternalServerError, new JsonObject
+                {
+                    ["success"] = false,
+                    ["reason"] = "Failed to retrieve pending ratings"
+                });
+                Console.WriteLine($"Error in GetPendingRatings: {ex.Message}");
+            }
+            e.Responded = true;
         }
     }
 }
