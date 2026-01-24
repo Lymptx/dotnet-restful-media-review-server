@@ -514,12 +514,22 @@ namespace dotnet_restful_media_review_server.Handlers
             try
             {
                 // Require admin authentication
-                if (e.Session == null || !e.Session.IsAdmin)
+                if (e.Session == null)
+                {
+                    e.Respond(HttpStatusCode.Unauthorized, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Authentication required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+                if (!e.Session.IsAdmin)
                 {
                     e.Respond(HttpStatusCode.Forbidden, new JsonObject
                     {
                         ["success"] = false,
-                        ["reason"] = "Admin access required"
+                        ["reason"] = $"Admin access required. Your username is '{e.Session.UserName}'. Only 'admin' is recognized as admin."
                     });
                     e.Responded = true;
                     return;
@@ -591,12 +601,22 @@ namespace dotnet_restful_media_review_server.Handlers
             try
             {
                 // Require admin authentication
-                if (e.Session == null || !e.Session.IsAdmin)
+                if (e.Session == null)
+                {
+                    e.Respond(HttpStatusCode.Unauthorized, new JsonObject
+                    {
+                        ["success"] = false,
+                        ["reason"] = "Authentication required"
+                    });
+                    e.Responded = true;
+                    return;
+                }
+                if (!e.Session.IsAdmin)
                 {
                     e.Respond(HttpStatusCode.Forbidden, new JsonObject
                     {
                         ["success"] = false,
-                        ["reason"] = "Admin access required"
+                        ["reason"] = $"Admin access required. Your username is '{e.Session.UserName}'. Only 'admin' is recognized as admin."
                     });
                     e.Responded = true;
                     return;
