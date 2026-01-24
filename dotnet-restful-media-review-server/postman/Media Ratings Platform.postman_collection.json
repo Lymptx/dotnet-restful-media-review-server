@@ -1,0 +1,1029 @@
+{
+  "info": {
+    "_postman_id": "280f7739-b0ba-4b88-b2b2-bb47a05c08e5",
+    "name": "Media Ratings Platform v2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users & Login",
+      "item": [
+        {
+          "name": "List users",
+          "id": "63eb7a87-25e0-4e75-8f95-c75e7f444ce6",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create testuser batman",
+          "id": "b5d4eafd-6de9-4e62-86db-e3c9712b6922",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"batman\",\r\n  \"password\": \"batcave\",\r\n  \"fullname\": \"Bruce Wayne\",\r\n  \"email\": \"office@batman.org\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create testuser Yoda",
+          "id": "43983b22-851b-4e47-b45c-7fbea6c3f706",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"Yoda\",\r\n  \"password\": \"jedimaster123\",\r\n  \"fullname\": \"Master Yoda\",\r\n  \"email\": \"Yoda@jedi-temple.org\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create user admin",
+          "id": "d6d95c41-eba8-41a2-a24f-cdad3ad63a4d",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"admin\",\r\n    \"name\": \"Admin User\",\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"admin123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login as batman",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();\r",
+                  "if (jsonData.token) {\r",
+                  "    pm.environment.set(\"token\", jsonData.token);\r",
+                  "    console.log(\"Token saved to environment!\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "9fdcd1ae-f85a-4616-94f9-4e1785777dbe"
+              }
+            }
+          ],
+          "id": "b1dbfd5e-ca66-436b-b120-6a12b70daebf",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"batman\",\r\n  \"password\": \"batcave\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();\r",
+                  "if (jsonData.token) {\r",
+                  "    pm.environment.set(\"token\", jsonData.token);\r",
+                  "    console.log(\"Token saved to environment!\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "538e9e8a-f55e-4fd9-b44d-c22c5e1a9abe"
+              }
+            }
+          ],
+          "id": "ac136588-e92f-4089-a759-47542722b148",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"batman\",\r\n  \"password\": \"batcave\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout user",
+          "id": "fd7e3ae5-a10f-405f-a28b-6d74626c096c",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"testuser\",\r\n    \"password\": \"secret123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "sessions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "66ddd490-e12f-4b03-adec-e0df683c4753"
+    },
+    {
+      "name": "Media Entries",
+      "item": [
+        {
+          "name": "List all media",
+          "id": "79bc56a6-1594-4b85-aaab-fad0bf815263",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get media by ID",
+          "id": "df26757b-bb55-4c92-bf47-03daff0c94fb",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/media/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create media",
+          "id": "6d4bd496-980f-4dc4-9ef0-f63526add698",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"The Dark Knight\",\r\n    \"mediaType\": \"movie\",\r\n    \"genre\": \"Action\",\r\n    \"releaseYear\": 2008,\r\n    \"ageRestriction\": 12,\r\n    \"description\": \"Batman faces the Joker in this epic crime thriller.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create media 2",
+          "id": "a42d8c44-605a-45b0-bf91-b656aef4f5ac",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"The Witcher 3: Wild Hunt\",\r\n    \"mediaType\": \"game\",\r\n    \"genre\": \"Role-Playing\",\r\n    \"releaseYear\": 2015,\r\n    \"ageRestriction\": 18,\r\n    \"description\": \"An open-world RPG where Geralt of Rivia hunts monsters while navigating political intrigue and personal destiny.\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create media 3",
+          "id": "707fc004-602a-47eb-b74d-d673933b6d57",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"The Witcher 3: Wild Hunt\",\r\n    \"mediaType\": \"game\",\r\n    \"genre\": \"Role-Playing\",\r\n    \"releaseYear\": 2015,\r\n    \"ageRestriction\": 18,\r\n    \"description\": \"An open-world RPG where Geralt of Rivia hunts monsters while navigating political intrigue and personal destiny.\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update media",
+          "id": "2460cb96-a707-4583-82fd-a07512513b62",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"The Dark Knight - Updated\",\r\n    \"mediaType\": \"movie\",\r\n    \"genre\": \"Action/Drama\",\r\n    \"releaseYear\": 2008,\r\n    \"ageRestriction\": 12,\r\n    \"description\": \"Updated description for this masterpiece.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/media/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete media",
+          "id": "960bdd93-f54c-4dbd-986c-bf2cabe13409",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/media/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "2448372e-09f4-4e7c-808e-5961abcbf8c2"
+    },
+    {
+      "name": "Ratings",
+      "item": [
+        {
+          "name": "Get ratings for media",
+          "id": "505bac2e-0b1b-41af-830f-10ba1bdc5d4d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings?mediaId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings"
+              ],
+              "query": [
+                {
+                  "key": "mediaId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get pending ratings (admin)",
+          "id": "536532fc-2def-41e0-8b53-bdbf53d142d4",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create or update rating",
+          "id": "b3523a63-204d-4850-a325-0b0c3a016e6e",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mediaId\": 1,\r\n    \"stars\": 5,\r\n    \"comment\": \"Absolutely amazing movie! The best superhero film ever made.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ratings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update rating",
+          "id": "1ce29998-1ff2-4079-b848-d3f5294a3137",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mediaId\": 1,\r\n    \"stars\": 4,\r\n    \"comment\": \"Great movie, but not perfect.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "POST /ratings",
+              "host": [
+                "POST "
+              ],
+              "path": [
+                "ratings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete rating",
+          "id": "417563f5-6339-49ca-99bf-2f6781d7e8e6",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Like rating",
+          "id": "9fb1abc4-cde2-44f4-a9fe-9a694a7d4dfa",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings/1/like",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings",
+                "1",
+                "like"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unlike rating",
+          "id": "eb764089-b85e-4aa3-8454-fa0014813f67",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings/1/like",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings",
+                "1",
+                "like"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm rating (admin)",
+          "id": "4be55832-fd42-4fec-963a-ffea6c50fed1",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings/1/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ratings",
+                "1",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "69ca801d-52ed-47e4-bf29-5119bd9dce43"
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Get my favorites",
+          "id": "80d55cba-f29a-4d67-ba16-7019500b00c9",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add to favorites",
+          "id": "9cc1f8f4-0079-4c0e-b383-45216182dada",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete from favorites",
+          "id": "986d237a-5a7a-419d-9356-0ab88a39f9c4",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "5ca4c4e6-610a-4de8-a1fe-e29c165b08ca"
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get my profile",
+          "id": "535c8495-49a9-4db5-8ce1-fd22143ea465",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get my rating history",
+          "id": "99a1a530-0234-4940-91db-c99593e23eb7",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile/ratings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile",
+                "ratings"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "bcfc6fc2-f9d2-44e8-af78-5b7a0748e0ff"
+    },
+    {
+      "name": "Search media",
+      "item": [
+        {
+          "name": "Search media",
+          "id": "f1fe0b78-d429-40a0-9920-ae53b9ffb5d8",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/media/search?title=knight&mediaType=movie&genre=action&minYear&maxYear&maxYear&maxAgeRestriction=15&minRating=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "knight",
+                  "uuid": "0b970ad8-8d45-4cef-9d63-1d90a1016d91"
+                },
+                {
+                  "key": "mediaType",
+                  "value": "movie",
+                  "uuid": "4e131c91-6768-4e68-a7ea-6ba9b1e822ff"
+                },
+                {
+                  "key": "genre",
+                  "value": "action",
+                  "uuid": "65590c55-3767-49bf-8a8a-97e8b01086b3"
+                },
+                {
+                  "key": "minYear",
+                  "value": null,
+                  "uuid": "830be762-4881-4390-953a-c13207446448"
+                },
+                {
+                  "key": "maxYear",
+                  "value": null,
+                  "uuid": "de76f7b4-8335-4d03-a98c-810796107098"
+                },
+                {
+                  "key": "maxYear",
+                  "value": null,
+                  "uuid": "532071e0-126f-437d-b762-a153f8504d1a"
+                },
+                {
+                  "key": "maxAgeRestriction",
+                  "value": "15",
+                  "uuid": "4f411e1d-1aef-49a8-817a-406f7955151e"
+                },
+                {
+                  "key": "minRating",
+                  "value": "3",
+                  "uuid": "74421a00-4178-4de3-a11c-17e32d854eee"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "2b754883-2319-439b-b1bd-2ad75122c927"
+    },
+    {
+      "name": "Leaderboard",
+      "item": [
+        {
+          "name": "Top rated media",
+          "id": "b8d6c261-b544-4fb5-ba45-60e2f9ca12b8",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/leaderboard/media?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "leaderboard",
+                "media"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Most active users",
+          "id": "a8db0327-f7c6-4b50-b1c9-34fe754d5a82",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/leaderboard/users?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "leaderboard",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "uuid": "2cd3b25e-93ed-4e6d-af19-77f89906bc3e"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "10246b27-9ef5-4256-a794-e15e205981e3"
+    },
+    {
+      "name": "Recommendations",
+      "item": [
+        {
+          "name": "Get recommendations",
+          "id": "7b196914-6072-479c-a4c7-96ed64ff7f7c",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recommendations?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recommendations"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "b5b52918-9f77-470d-98c9-07e3cb2cdbe5"
+    },
+    {
+      "name": "Version",
+      "id": "c971f9ec-a748-4864-bd76-b8f30cdf115d",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/version",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "version"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
